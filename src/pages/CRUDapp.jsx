@@ -1,5 +1,5 @@
 import axios from "axios";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const CRUDapp = () => {
   const [users, setUsers] = useState([]);
@@ -20,8 +20,12 @@ const CRUDapp = () => {
   });
 
   const getUsers = async () => {
-    const response = await api.get("/");
-    setUsers(response.data);
+    try {
+      const response = await api.get("/");
+      setUsers(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -48,11 +52,14 @@ const CRUDapp = () => {
       country: formData.get("country"),
       photo: formData.get("photo"),
     };
-
-    const request = await api.post("/", newUser);
-    setUsers((prev) => [...prev, newUser]);
-    console.log(request);
-    resetForm();
+    try {
+      const request = await api.post("/", newUser);
+      setUsers((prev) => [...prev, newUser]);
+      console.log(request);
+      resetForm();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleEdit = (user) => {
@@ -76,13 +83,18 @@ const CRUDapp = () => {
       country,
       photo,
     };
+    try {
+      const req = await api.put(`/${currentId}`, updateUser);
 
-    const req = await api.put(`/${currentId}`, updateUser);
+      setUsers(
+        users.map((user) => (user.id === currentId ? updateUser : user)),
+      );
 
-    setUsers(users.map((user) => (user.id === currentId ? updateUser : user)));
-
-    resetForm();
-    console.log(updateUser);
+      console.log(updateUser);
+      resetForm();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   //for two task with one button
@@ -97,10 +109,53 @@ const CRUDapp = () => {
   };
 
   const handleDelete = async (id) => {
-    const req = await api.delete(`/${id}`);
-    setUsers(users.filter((user) => user.id !== id));
-    console.log(req);
+    try {
+      const req = await api.delete(`/${id}`);
+      setUsers(users.filter((user) => user.id !== id));
+      console.log(req);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  let userData = (
+    <tr>
+      <td>Loading...</td>
+    </tr>
+  );
+  if (users.length > 0) {
+    userData = users.map((user) => {
+      return (
+        <tr key={user.id}>
+          <td>{user.name}</td>
+          <td>{user.username}</td>
+          <td>{user.email}</td>
+          <td>{user.country}</td>
+          <td>
+            <img src={user.photo} alt={user.name} />
+          </td>
+          <td>
+            <button
+              onClick={() => {
+                handleEdit(user);
+              }}
+            >
+              Edit
+            </button>
+          </td>
+          <td>
+            <button
+              onClick={() => {
+                handleDelete(user.id);
+              }}
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      );
+    });
+  }
 
   return (
     <>
@@ -117,6 +172,7 @@ const CRUDapp = () => {
             placeholder="Enter your Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
           <input
             type="text"
@@ -124,6 +180,7 @@ const CRUDapp = () => {
             placeholder="Enter username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
           <input
             type="email"
@@ -131,6 +188,7 @@ const CRUDapp = () => {
             placeholder="Enter Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <input
             type="text"
@@ -138,6 +196,7 @@ const CRUDapp = () => {
             placeholder="Enter country"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
+            required
           />
           <input
             type="url"
@@ -145,6 +204,7 @@ const CRUDapp = () => {
             placeholder="Paste link of image"
             value={photo}
             onChange={(e) => setPhoto(e.target.value)}
+            required
           />
           {/* <input type="submit" />
           <button onClick={handleUpdate}>update</button> */}
@@ -162,39 +222,7 @@ const CRUDapp = () => {
             <th>Photo</th>
           </tr>
         </thead>
-        <tbody>
-          {users.map((user) => {
-            return (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.country}</td>
-                <td>
-                  <img src={user.photo} alt={user.name} />
-                </td>
-                <td>
-                  <button
-                    onClick={() => {
-                      handleEdit(user);
-                    }}
-                  >
-                    Edit
-                  </button>
-                </td>
-                <td>
-                  <button
-                    onClick={() => {
-                      handleDelete(user.id);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
+        <tbody>{userData}</tbody>
       </table>
     </>
   );
