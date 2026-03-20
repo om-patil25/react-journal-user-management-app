@@ -8,7 +8,7 @@ This workspace serves as a hands-on learning environment to strengthen core Reac
 
 ## 🔗 Live Demo
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-green?style=for-the-badge&logo=vercel)](https://react-workspace.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-green?style=for-the-badge&logo=vercel)](https://react-workspace-opdev.vercel.app)
 
 ---
 
