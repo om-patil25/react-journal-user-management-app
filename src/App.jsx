@@ -5,6 +5,7 @@ import { House, NotebookPen, Users, Sun, Moon } from "lucide-react";
 import UsersDB from "./pages/UsersDB";
 import { ThemeDataContext } from "./context/ThemeContext";
 import { useContext, useEffect } from "react";
+import NotFound from "./components/NotFound";
 
 const App = () => {
   const [theme, setTheme] = useContext(ThemeDataContext);
@@ -19,8 +20,8 @@ const App = () => {
 
   const getCurrentLocation = () => {
     if (checkPath("/")) return "translate-x-0";
-    if (checkPath("/DailyJournal")) return "translate-x-full";
-    if (checkPath("/Users")) return "translate-x-[200%]";
+    if (checkPath("/dailyjournal")) return "translate-x-full";
+    if (checkPath("/users")) return "translate-x-[200%]";
   };
 
   return (
@@ -38,14 +39,14 @@ const App = () => {
             <span className="hidden md:block"> Home</span>
           </Link>
           <Link
-            to="/DailyJournal"
+            to="/dailyjournal"
             className="h-full flex justify-center flex-1 z-10 rounded-full text-gray-900 hover:text-shadow-2xs dark:text-white items-center gap-2"
           >
             <NotebookPen />
             <span className="hidden md:block"> Daily Journal</span>
           </Link>
           <Link
-            to="/Users"
+            to="/users"
             className="h-full flex justify-center flex-1 z-10 rounded-full text-gray-900 hover:text-shadow-2xs dark:text-white items-center gap-2"
           >
             <Users />
@@ -65,8 +66,9 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/DailyJournal" element={<DailyJournal />} />
-        <Route path="/Users" element={<UsersDB />} />
+        <Route path="/dailyjournal" element={<DailyJournal />} />
+        <Route path="/users" element={<UsersDB />} />
+        <Route path="/*" element={<NotFound />} />
       </Routes>
     </>
   );
